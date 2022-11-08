@@ -5,12 +5,15 @@ import HomePage from "../pages/HomePage";
 import ReservationsPage from "../pages/ReservationsPage";
 import ReservationPage from "../pages/ReservationPage";
 import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 import { PrivateRoute } from "./PrivateRoute";
 
 export const RouterNavigation = () => {
   return (
     <Routes>
       <Route path="/signin" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+
       <Route
         path=""
         element={

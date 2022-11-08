@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, TextField, Button, CardContent, Typography, Stack } from "@mui/material";
 
-import { signin } from "../../store/auth";
+import { signin, signinGoogle } from "../../store/auth";
 import { RootState } from "../../store";
 import "./styles.scss";
 
@@ -51,6 +51,10 @@ export const Login = () => {
             <Button variant="contained" onClick={handleSubmit}>
               Sign in
             </Button>
+            <Button variant="contained" onClick={()=>dispatch(signinGoogle() as any)}>
+              Sign in Google
+            </Button>
+            <Typography onClick={() => navigate("/signup")} variant="inherit">crate account</Typography>
           </Stack>
         </CardContent>
       </Card>

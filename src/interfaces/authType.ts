@@ -1,5 +1,6 @@
 export interface Auth {
   user: CurentUser;
+  error?: string
 }
 
 export interface CurentUser {
