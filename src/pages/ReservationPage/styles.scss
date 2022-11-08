@@ -1,0 +1,15 @@
+.reservation-page {
+  &__wrapper-filter {
+    padding: 2rem 0.4rem;
+  }
+
+  &__title {
+    text-align: left;
+    padding-left: 20%;
+  }
+
+  &__wrapper-tables {
+    padding-left: 20%;
+    padding-right: 20%;
+  }
+}

@@ -1,0 +1,44 @@
+.table-reservation{
+    flex:1; 
+    border-width:.5rem;
+    border-radius:7px;
+    border-color:black;
+    background-color:whitesmoke;
+    margin-bottom:2rem;
+
+    &__header{
+        flex:1;
+        border-width:.5rem;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        border-color:#000;
+        background-color:gray;
+        padding: 1rem;
+    }
+
+    &__row{
+        flex:1;
+        flex-direction: row!important;
+        align-content: space-between!important;
+        padding-top: .5rem!important;
+        padding-bottom: .5rem!important;
+    }
+
+    &__button {
+        width: 7rem;
+        height: 2rem;
+        padding: .5rem;
+        border-radius: 7px;
+        margin-left: 1.3rem;
+
+        &--booked{
+            background-color: lightcoral;
+            color:white
+        }
+
+        &--book{
+            background-color: lightgreen;
+            color:black
+        }
+    }
+}
