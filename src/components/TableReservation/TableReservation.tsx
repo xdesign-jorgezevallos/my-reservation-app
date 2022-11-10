@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography, Box } from "@mui/material";
-import ReservationFormDialog from "../ReservationFomDialog";
+import ReservationFormDialog from "../ReservationFormDialog";
 
 import "./styles.scss";
 

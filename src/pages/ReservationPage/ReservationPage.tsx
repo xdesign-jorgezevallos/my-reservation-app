@@ -6,7 +6,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Stack, Typography, TextField } from "@mui/material";
 
 import TemplateBase from "../../components/commons/TemplateBase/TemplateBase";
-import { fetchReservations } from "../../store/reservationsSlice";
+import { fetchReservations } from "../../store/reservationSlice";
 import { RootState } from "../../store";
 import TableReservation from "../../components/TableReservation";
 

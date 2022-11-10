@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, TextField, Button, CardContent, Typography, Stack } from "@mui/material";
 
-import { signup } from "../../store/auth";
+import { signup } from "../../store/authSlice";
 import { RootState } from "../../store";
 import "./styles.scss";
 
@@ -27,9 +27,10 @@ export const Signup = () => {
     };
 
     const handleSignUp = () => {
-        const {email, password, rePassword} = newUserData
+        const {email, password, rePassword} = newUserData;
         if(password === rePassword){
-            dispatch(signup(email,password));
+            dispatch(signup({ email,password}));
+            navigate('/');
         }else{
             alert('Insert same password!')
         }

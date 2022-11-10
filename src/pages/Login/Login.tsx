@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, TextField, Button, CardContent, Typography, Stack } from "@mui/material";
 
-import { signin, signinGoogle } from "../../store/auth";
+import { signin, signinGoogle } from "../../store/authSlice";
 import { RootState } from "../../store";
 import "./styles.scss";
 

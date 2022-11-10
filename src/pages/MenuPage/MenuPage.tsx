@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import TemplateBase from "../../components/commons/TemplateBase/TemplateBase";
-import { addDish, removeDish } from "../../store/dishes";
+import { addDish, removeDish } from "../../store/disheSlice";
 import { DishState } from "../../interfaces/dishType";
 
 const styles= {

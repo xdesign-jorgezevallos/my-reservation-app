@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import { signout } from "../../../store/auth";
+import { signout } from "../../../store/authSlice";
 
 const styles = {
   root: {

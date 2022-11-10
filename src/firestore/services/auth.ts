@@ -1,4 +1,9 @@
-import { signInWithPopup, signInWithEmailAndPassword, GoogleAuthProvider, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { ref, get } from "firebase/database";
 
 import { authFB, googleProvider, realtimeDB } from "../init";
@@ -18,6 +23,8 @@ const saveUserDataLocalStorage = async (user:any, role:string) => {
 }
 
 export const createAccount = async (email:string, password:string) => {
+  console.log('email',email)
+  console.log('password',password)
   const userCredential = await createUserWithEmailAndPassword(authFB, email, password);
   const { user } = userCredential;
   await saveUserDataLocalStorage(user, "User")

@@ -1,4 +1,4 @@
-import { ref, get, push } from "firebase/database";
+import { ref, get, push, update,remove } from "firebase/database";
 
 import { ReservationState } from "../../interfaces/reservationType";
 import { realtimeDB } from "../init";
@@ -11,8 +11,6 @@ export const findReservation = async (date: Date, tableName: number, hour: numbe
   let reservationExist: boolean = false;
 
   for (let key in data) {
-    console.log(`${data[key].table} === ${tableName}`);
-    console.log(`${data[key].hour} === ${hour}`);
     if (data[key].table === tableName && data[key].hour === hour) {
       reservationExist = true;
     }
@@ -82,3 +80,26 @@ export const saveReservation = async (data: ReservationState) => {
   }
   return refResponse;
 };
+
+export const updateReservation = async (reservationUID: string, data:ReservationState) => {
+  const rDate =
+      `${data.reservationDate?.getFullYear()}-${data.reservationDate?.getMonth()}-${data.reservationDate?.getDate()}`;
+
+  const refResponse = await update(ref(realtimeDB, `restaurant/reservations/${rDate}/${reservationUID}`), data);
+  if (refResponse != null) {
+    return data;
+  }
+  return refResponse;
+}
+
+export const deleteReservation = async (reservationUID: string, data:ReservationState) => {
+  const reservationDate =  new Date(`${data.reservationDate}`);
+  const rDate =
+      `${reservationDate.getFullYear()}-${reservationDate.getMonth()+1}-${reservationDate.getDate()}`;
+
+  const refResponse = await remove(ref(realtimeDB, `restaurant/reservations/${rDate}/${reservationUID}`));
+  return {
+    id: reservationUID,
+    ...data
+  }
+}

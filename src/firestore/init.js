@@ -20,10 +20,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
+export const authFB = getAuth(app);
 // const analytics = getAnalytics(app);
 
 // Initialize Firestore
 export const realtimeDB = getDatabase(app);
-export const authFB = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

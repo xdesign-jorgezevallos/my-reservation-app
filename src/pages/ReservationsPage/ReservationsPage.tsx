@@ -9,7 +9,12 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import TemplateBase from "../../components/commons/TemplateBase/TemplateBase";
 import { ReservationState } from "../../interfaces/reservationType";
 import { RootState } from "../../store";
-import { fetchReservations, fetchUserReservations } from "../../store/reservationsSlice";
+import {
+  fetchReservations,
+  fetchUserReservations,
+  selectedReservation,
+  cancelReservation
+} from "../../store/reservationSlice";
 
 export const ReservationsPagePage: React.FC = () => {
   const dispatch = useDispatch();
@@ -31,6 +36,15 @@ export const ReservationsPagePage: React.FC = () => {
     setDateSelected(date as Date);
     loadReservation();
   };
+
+  const selectReservation = (reservation: any) => {
+    dispatch(selectedReservation(reservation))
+  }
+
+  const handleCcanceReservation = (reservation: any) => {
+     const { id } = reservation;
+     dispatch(cancelReservation({reservationUID:id, reservationData: reservation }) as any)
+  }
 
   useEffect(() => {
     loadReservation();
@@ -70,10 +84,17 @@ export const ReservationsPagePage: React.FC = () => {
                 <Stack direction="row" spacing={2}>
                   <Typography variant="inherit">Table: </Typography>
                   <Typography variant="body2"> {reservation.table} </Typography>
+
+                  <Typography variant="inherit">Time: </Typography>
+                  <Typography variant="body2"> {`${reservation.hour}:00`} </Typography>
                 </Stack>
                 <Stack direction="row" spacing={2}>
                   <Typography variant="inherit">Status: </Typography>
                   <Typography variant="body2"> {reservation.status ? "Reserved" : "Free"} </Typography>
+                </Stack>
+                <Stack direction="row" spacing={2}>
+                  <Button variant="contained" color="primary" onClick={()=>selectReservation(reservation)} >Modify</Button>
+                  <Button variant="contained" color="error" onClick={()=>handleCcanceReservation(reservation)} >Cancel</Button>
                 </Stack>
               </Card>
             ))}

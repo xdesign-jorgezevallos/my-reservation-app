@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./auth";
-import dishesReducer from "./dishes";
-import reservationsReducer from "./reservationsSlice";
+import authReducer from "./authSlice";
+import dishesReducer from "./disheSlice";
+import reservationsReducer from "./reservationSlice";
 
 const store = configureStore({
   reducer: {
@@ -9,6 +9,10 @@ const store = configureStore({
     dishes: dishesReducer,
     reservations: reservationsReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

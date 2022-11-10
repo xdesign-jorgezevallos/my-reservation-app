@@ -11,7 +11,7 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import { ReservationState } from "../../interfaces/reservationType";
 
-import { addResrvation } from "../../store/reservationsSlice";
+import { addReservation } from "../../store/reservationSlice";
 
 import "./styles.scss";
 import { RootState } from "../../store";
@@ -71,7 +71,7 @@ export const ReservationFormDialog: React.FC<IReservationFormDialog> = (props: I
       return;
     }
     bookData.status = true;
-    dispatch(addResrvation(bookData) as any);
+    dispatch(addReservation(bookData) as any);
   };
 
   const handleForm = (event: any) => {
@@ -86,7 +86,6 @@ export const ReservationFormDialog: React.FC<IReservationFormDialog> = (props: I
       alert(reservationExist.message);
     }
     if (savedReservation) {
-      setBookData(initialDataForm);
       handleClose();
     }
   }, [reservationExist, savedReservation]);
