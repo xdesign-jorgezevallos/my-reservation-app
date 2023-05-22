@@ -1,9 +1,13 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import NavBarMenu from "./NavBarMenu";
+import { render, screen } from '../../../utils/test-utils';
+import NavBarMenu from './NavBarMenu';
 
-test("render NAVBAR menu", () => {
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => jest.fn(),
+}));
+
+test('render NAVBAR menu', () => {
   render(<NavBarMenu />);
-  const linkElement = screen.getByTestId("navbar-menu");
+  const linkElement = screen.getByTestId('navbar-menu');
   expect(linkElement).toBeInTheDocument();
 });

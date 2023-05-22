@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HomePage should match homePage snapshot 1`] = `
+<TemplateBase>
+  <div
+    data-testid="home-page"
+  >
+    <h1
+      data-testid="title-page"
+    >
+      Welcome Home
+    </h1>
+    <p>
+      This is home content
+    </p>
+  </div>
+  <br />
+</TemplateBase>
+`;

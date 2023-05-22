@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 
 import {
   getDateReservations,
@@ -6,66 +6,80 @@ import {
   findReservation,
   getDateReservationsByUser,
   deleteReservation,
-  updateReservation } from "../firestore/services/reservation";
-import { Reservation, ReservationResponse, ReservationState } from "../interfaces/reservationType";
+  updateReservation,
+} from '../firestore/services/reservation';
+import { Reservation, ReservationResponse, ReservationState } from '../interfaces/reservationType';
 
 const initialState: Reservation = {
   reservations: [],
-  reservationExist: { status: false, message: "" },
+  reservationExist: { status: false, message: '' },
   savedReservation: false,
   selectedReservation: {},
   showModifyReservationDialog: false,
 };
 
 // Thunks
-export const fetchReservations = createAsyncThunk("reservations/fetchReservationsByDate", async (date: Date) => {
+export const fetchReservations = createAsyncThunk('reservations/fetchReservationsByDate', async (date: Date) => {
   const response = await getDateReservations(date);
   return response;
 });
 
-export const fetchUserReservations = createAsyncThunk("reservations/fetchUserReservationsByDate", async (data: { date: Date; uid: string }) => {
-  const response = await getDateReservationsByUser(data.date, data.uid);
-  return response;
-});
+export const fetchUserReservations = createAsyncThunk(
+  'reservations/fetchUserReservationsByDate',
+  async (data: { date: Date; uid: string }) => {
+    console.log('thunk: ', data.date);
+    const response = await getDateReservationsByUser(data.date, data.uid);
+    return response;
+  }
+);
 
-export const addReservation = createAsyncThunk("reservations/addReservation", async (reservationData: ReservationState, { rejectWithValue }) => {
-  try {
-    const { reservationDate, table, hour } = reservationData;
-    const exist = await findReservation(reservationDate as Date, table, hour);
-    if (exist) {
-      return rejectWithValue({ status: true, message: "Booked table" });
+export const addReservation = createAsyncThunk(
+  'reservations/addReservation',
+  async (reservationData: ReservationState, { rejectWithValue }) => {
+    try {
+      const { reservationDate, table, hour } = reservationData;
+      const exist = await findReservation(reservationDate as Date, table, hour);
+      if (exist) {
+        return rejectWithValue({ status: true, message: 'Booked table' });
+      }
+
+      const response = saveReservation(reservationData);
+      return response;
+    } catch (error) {
+      console.log('Error: ', error);
     }
-
-    const response = saveReservation(reservationData);
-    return response;
-  } catch (error) {
-    console.log("Error: ", error);
   }
-});
+);
 
-export const modifyReservation = createAsyncThunk("reservations/modifyReservation", async (data:{reservationUID: string ,reservationData: ReservationState}, { rejectWithValue }) => {
-  try {
-    const {reservationUID, reservationData}= data;
-    const response = updateReservation(reservationUID,reservationData);
-    return response;
-  } catch (error) {
-    console.log("Error: ", error);
+export const modifyReservation = createAsyncThunk(
+  'reservations/modifyReservation',
+  async (data: { reservationUID: string; reservationData: ReservationState }, { rejectWithValue }) => {
+    try {
+      const { reservationUID, reservationData } = data;
+      const response = updateReservation(reservationUID, reservationData);
+      return response;
+    } catch (error) {
+      console.log('Error: ', error);
+    }
   }
-});
+);
 
-export const cancelReservation = createAsyncThunk("reservations/cancelReservation", async (data:{reservationUID: string ,reservationData: ReservationState}, { rejectWithValue }) => {
-  try {
-    const {reservationUID, reservationData }= data;
-    const response = deleteReservation(reservationUID,reservationData);
-    return response;
-  } catch (error) {
-    console.log("Error: ", error);
+export const cancelReservation = createAsyncThunk(
+  'reservations/cancelReservation',
+  async (data: { reservationUID: string; reservationData: ReservationState }, { rejectWithValue }) => {
+    try {
+      const { reservationUID, reservationData } = data;
+      const response = deleteReservation(reservationUID, reservationData);
+      return response;
+    } catch (error) {
+      console.log('Error: ', error);
+    }
   }
-});
+);
 
 // Reducers
 export const reservationsReducer = createSlice({
-  name: "reservations",
+  name: 'reservations',
   initialState,
   reducers: {
     createReservation: (state, action: PayloadAction<ReservationState>) => {
@@ -78,7 +92,7 @@ export const reservationsReducer = createSlice({
     unselectedReservation: (state, action) => {
       state.selectedReservation = {};
       state.showModifyReservationDialog = false;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -94,11 +108,12 @@ export const reservationsReducer = createSlice({
       })
       .addCase(addReservation.fulfilled, (state, action) => {
         if (action.payload) {
-          state.reservations.push(action.payload as any );
+          state.reservations.push(action.payload as any);
           state.savedReservation = true;
         }
       })
       .addCase(fetchUserReservations.fulfilled, (state, action) => {
+        console.log('addcase: ', action.payload);
         state.reservations = action.payload;
       })
       .addCase(modifyReservation.fulfilled, (state, action) => {
@@ -106,8 +121,8 @@ export const reservationsReducer = createSlice({
         //state.reservations.splice(action.payload, 1);
       })
       .addCase(cancelReservation.fulfilled, (state, action) => {
-        state.reservations = state.reservations.filter(reservation => reservation.id !== action?.payload?.id)
-        });
+        state.reservations = state.reservations.filter((reservation) => reservation.id !== action?.payload?.id);
+      });
   },
 });
 

@@ -1,12 +1,11 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from 'react-router-dom';
 
-import HomePage from "../pages/HomePage";
-import ReservationsPage from "../pages/ReservationsPage";
-import ReservationPage from "../pages/ReservationPage";
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import { PrivateRoute } from "./PrivateRoute";
+import HomePage from '../pages/HomePage';
+import ReservationsPage from '../pages/ReservationsPage';
+import ReservationPage from '../pages/ReservationPage';
+import Login from '../pages/Login';
+import Signup from '../pages/Signup';
+import { PrivateRoute } from './PrivateRoute';
 
 export const RouterNavigation = () => {
   return (

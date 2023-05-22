@@ -3,50 +3,50 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
-} from "firebase/auth";
-import { ref, get } from "firebase/database";
+} from 'firebase/auth';
+import { ref, get } from 'firebase/database';
 
-import { authFB, googleProvider, realtimeDB } from "../init";
-import { USER_EMAIL, USER_SESSION_ROLE, USER_UID } from "../../constants/localstorage";
+import { authFB, googleProvider, realtimeDB } from '../init';
+import { USER_EMAIL, USER_SESSION_ROLE, USER_UID } from '../../constants/localstorage';
 
 const hasRoleAdmin = async (uid: string): Promise<boolean> => {
   const reservationRef = ref(realtimeDB, `restaurant/admin/${uid}`);
   const snapshot = await get(reservationRef);
   const data = snapshot.val();
-  return data?.email;
+  return data?.email ? true : false;
 };
 
-const saveUserDataLocalStorage = async (user:any, role:string) => {
+const saveUserDataLocalStorage = async (user: any, role: string) => {
   localStorage.setItem(USER_UID, user.uid);
-  localStorage.setItem(USER_EMAIL, user.email || "");
+  localStorage.setItem(USER_EMAIL, user.email || '');
   localStorage.setItem(USER_SESSION_ROLE, role);
-}
+};
 
-export const createAccount = async (email:string, password:string) => {
-  console.log('email',email)
-  console.log('password',password)
+export const createAccount = async (email: string, password: string) => {
   const userCredential = await createUserWithEmailAndPassword(authFB, email, password);
   const { user } = userCredential;
-  await saveUserDataLocalStorage(user, "User")
+  await saveUserDataLocalStorage(user, 'User');
 
   return {
     user: {
       userUID: user.uid,
       email: user.email,
-      displayName: user?.displayName || "",
-      role: "User",
+      displayName: user?.displayName || '',
+      role: 'User',
     },
   };
-}
+};
 
 export const signInEmailAndPassword = async (email: string, password: string) => {
   try {
     const userData = await signInWithEmailAndPassword(authFB, email, password);
+
     if (userData) {
       const isAdmin = await hasRoleAdmin(userData.user.uid);
-      const userRole = !!isAdmin ? "Admin" : "User";
+      const userRole = isAdmin ? 'Admin' : 'User';
       const { user } = userData;
-      await saveUserDataLocalStorage(user, userRole)
+
+      await saveUserDataLocalStorage(user, userRole);
 
       return {
         user: {
@@ -58,26 +58,29 @@ export const signInEmailAndPassword = async (email: string, password: string) =>
       };
     }
   } catch (error) {
-    console.log("Error login: ", error);
+    console.log('Error login: ', error);
   }
 };
 
 export const signInWithGoogle = async () => {
   try {
     const responseData = await signInWithPopup(authFB, googleProvider);
-    const user = responseData.user;
-    await saveUserDataLocalStorage(user, "User")
+    const { user } = responseData;
+    const isAdmin = await hasRoleAdmin(user.uid);
+    const userRole = isAdmin ? 'Admin' : 'User';
+
+    await saveUserDataLocalStorage(user, userRole);
 
     return {
       user: {
         userUID: user.uid,
         email: user.email,
-        displayName: user?.displayName || "",
-        role: "User",
+        displayName: user?.displayName || '',
+        role: userRole,
       },
     };
   } catch (error) {
-    console.log('error: ',error)
+    console.log('error: ', error);
   }
 };
 

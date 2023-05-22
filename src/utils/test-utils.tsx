@@ -1,4 +1,3 @@
-
 // ---------------------------------
 // USING
 // ---------------------------------
@@ -14,24 +13,24 @@ import { render as rtlRender } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import store from '../store'
+import store from '../store';
 
 interface WrapperProps {
-    children?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 function render(ui: any, { route = '/', initialState = {} } = {}) {
-    window.history.pushState({}, 'Test page', route);
-    
-    const Wrapper = ({ children }: WrapperProps) => {
-        return (
-            <Provider store={store}>
-                <BrowserRouter>{children}</BrowserRouter>
-            </Provider>
-        );
-    };
+  window.history.pushState({}, 'Test page', route);
 
-    return rtlRender(ui, { wrapper: Wrapper });
+  const Wrapper = ({ children }: WrapperProps) => {
+    return (
+      <Provider store={store}>
+        <BrowserRouter>{children}</BrowserRouter>
+      </Provider>
+    );
+  };
+
+  return rtlRender(ui, { wrapper: Wrapper });
 }
 
 // re-export everything
