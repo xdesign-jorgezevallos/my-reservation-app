@@ -1,20 +1,21 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Stack, Typography, TextField, Button, Card, Box } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Stack, Typography, TextField, Button, Card, Box } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import TemplateBase from "../../components/commons/TemplateBase/TemplateBase";
-import { ReservationState } from "../../interfaces/reservationType";
-import { RootState } from "../../store";
+import TemplateBase from '../../components/commons/TemplateBase/TemplateBase';
+import { ReservationState } from '../../interfaces/reservationType';
+import { RootState } from '../../store';
 import {
   fetchReservations,
   fetchUserReservations,
   selectedReservation,
-  cancelReservation
-} from "../../store/reservationSlice";
+  cancelReservation,
+  fetchAllReservations,
+} from '../../store/reservationSlice';
 
 export const ReservationsPagePage: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,13 +25,17 @@ export const ReservationsPagePage: React.FC = () => {
   const [dateSelected, setDateSelected] = useState<Date>(new Date());
 
   const loadReservation = useCallback(() => {
-    if (user.role === "Admin") {
+    if (user.role === 'Admin') {
       dispatch(fetchReservations(dateSelected) as any);
     }
-    if (user.role === "User") {
+    if (user.role === 'User') {
       dispatch(fetchUserReservations({ date: dateSelected, uid: user.userUID }) as any);
     }
   }, [dispatch, dateSelected, user.role, user.userUID]);
+
+  const fetchAll = useCallback(() => {
+    dispatch(fetchAllReservations() as any);
+  }, []);
 
   const handleDateSelector = (date: Date | null) => {
     setDateSelected(date as Date);
@@ -38,13 +43,13 @@ export const ReservationsPagePage: React.FC = () => {
   };
 
   const selectReservation = (reservation: any) => {
-    dispatch(selectedReservation(reservation))
-  }
+    dispatch(selectedReservation(reservation));
+  };
 
   const handleCcanceReservation = (reservation: any) => {
-     const { id } = reservation;
-     dispatch(cancelReservation({reservationUID:id, reservationData: reservation }) as any)
-  }
+    const { id } = reservation;
+    dispatch(cancelReservation({ reservationUID: id, reservationData: reservation }) as any);
+  };
 
   useEffect(() => {
     loadReservation();
@@ -54,25 +59,49 @@ export const ReservationsPagePage: React.FC = () => {
     <TemplateBase>
       <div>
         <h1>Reservations</h1>
-        <Stack direction="row" style={{ backgroundColor: "#EBEDEF ", borderRadius: "5px", padding: "20px", marginLeft: "50px", marginRight: "50px" }}>
-          <Stack direction="column" style={{ width: "60%", marginBottom: 30, alignItems: "start" }} spacing={2}>
+        <Stack
+          direction="row"
+          style={{
+            backgroundColor: '#EBEDEF ',
+            borderRadius: '5px',
+            padding: '20px',
+            marginLeft: '50px',
+            marginRight: '50px',
+          }}
+        >
+          <Stack direction="column" style={{ width: '60%', marginBottom: 30, alignItems: 'start' }} spacing={2}>
             <Typography variant="body1">Search Reservation by Date</Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="Reservation Date" value={dateSelected} onChange={handleDateSelector} renderInput={(params) => <TextField {...params} />} />
+              <DatePicker
+                label="Reservation Date"
+                value={dateSelected}
+                onChange={handleDateSelector}
+                renderInput={(params) => <TextField {...params} />}
+              />
             </LocalizationProvider>
+            <Button variant="outlined" onClick={fetchAll}>
+              Show all
+            </Button>
           </Stack>
 
-          <Stack direction="column" style={{ width: "40%", paddingLeft: "20%", paddingRight: "20%", alignSelf: "end", paddingBottom: "32px" }} spacing={2}>
-            <Button variant="outlined" onClick={() => navigate("/reservation")}>
+          <Stack
+            direction="column"
+            spacing={2}
+            style={{ width: '40%', paddingLeft: '20%', paddingRight: '20%', alignSelf: 'end', paddingBottom: '32px' }}
+          >
+            <Button variant="outlined" onClick={() => navigate('/reservation')}>
               Book table
             </Button>
           </Stack>
         </Stack>
+        <Typography style={{ display: 'flex', paddingLeft: '6%', marginTop: 5 }} variant="caption">
+          {reservations.length} reservations
+        </Typography>
 
-        <Box style={{ marginLeft: "50px", marginRight: "50px", paddingTop: "1rem" }}>
+        <Box style={{ marginLeft: '50px', marginRight: '50px', paddingTop: '1rem' }}>
           {reservations.length > 0 &&
             reservations.map((reservation: ReservationState, index: number) => (
-              <Card key={index} style={{ marginTop: ".5rem", padding: "1.5rem" }}>
+              <Card key={index} style={{ marginTop: '.5rem', padding: '1.5rem' }}>
                 <Stack direction="row" spacing={2}>
                   <Typography variant="inherit">Name: </Typography>
                   <Typography variant="body2">{reservation.clientReservation} </Typography>
@@ -90,11 +119,15 @@ export const ReservationsPagePage: React.FC = () => {
                 </Stack>
                 <Stack direction="row" spacing={2}>
                   <Typography variant="inherit">Status: </Typography>
-                  <Typography variant="body2"> {reservation.status ? "Reserved" : "Free"} </Typography>
+                  <Typography variant="body2"> {reservation.status ? 'Reserved' : 'Free'} </Typography>
                 </Stack>
                 <Stack direction="row" spacing={2}>
-                  <Button variant="contained" color="primary" onClick={()=>selectReservation(reservation)} >Modify</Button>
-                  <Button variant="contained" color="error" onClick={()=>handleCcanceReservation(reservation)} >Cancel</Button>
+                  <Button variant="contained" color="primary" onClick={() => selectReservation(reservation)}>
+                    Modify
+                  </Button>
+                  <Button variant="contained" color="error" onClick={() => handleCcanceReservation(reservation)}>
+                    Cancel
+                  </Button>
                 </Stack>
               </Card>
             ))}

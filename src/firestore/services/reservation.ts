@@ -22,8 +22,32 @@ export const findReservation = async (date: Date, tableName: number, hour: numbe
   return reservationExist;
 };
 
+export const getAllReservations = async () => {
+  const reservationsRef = ref(realtimeDB, `restaurant/reservations/`);
+  const snapshot = await get(reservationsRef);
+  const data = snapshot.val();
+  const allReservations = [];
+
+  for (let key in data) {
+    const keyData = data[key];
+
+    for (let key2 in keyData) {
+      allReservations.push({
+        id: key,
+        clientReservation: keyData[key2].clientReservation,
+        reservationAmount: keyData[key2].reservationAmount,
+        status: keyData[key2].status,
+        reservationDate: keyData[key2].reservationDate,
+        table: keyData[key2].table,
+        hour: keyData[key2].hour,
+        userUID: keyData[key2].userUID,
+      });
+    }
+  }
+  return allReservations;
+};
+
 export const getDateReservations = async (date: Date) => {
-  console.log('>>> getDateReservations: ', date.getMonth());
   const selectedDate = new Date(date);
   const reservationRef = ref(
     realtimeDB,

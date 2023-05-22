@@ -7,6 +7,7 @@ import {
   getDateReservationsByUser,
   deleteReservation,
   updateReservation,
+  getAllReservations,
 } from '../firestore/services/reservation';
 import { Reservation, ReservationResponse, ReservationState } from '../interfaces/reservationType';
 
@@ -21,6 +22,11 @@ const initialState: Reservation = {
 // Thunks
 export const fetchReservations = createAsyncThunk('reservations/fetchReservationsByDate', async (date: Date) => {
   const response = await getDateReservations(date);
+  return response;
+});
+
+export const fetchAllReservations = createAsyncThunk('reservations/fetchAllReservations', async () => {
+  const response = await getAllReservations();
   return response;
 });
 
@@ -122,6 +128,9 @@ export const reservationsReducer = createSlice({
       })
       .addCase(cancelReservation.fulfilled, (state, action) => {
         state.reservations = state.reservations.filter((reservation) => reservation.id !== action?.payload?.id);
+      })
+      .addCase(fetchAllReservations.fulfilled, (state, action) => {
+        state.reservations = action.payload;
       });
   },
 });
