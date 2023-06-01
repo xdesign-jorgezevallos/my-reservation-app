@@ -9,14 +9,14 @@ import {
   updateReservation,
   getAllReservations,
 } from '../firestore/services/reservation';
-import { Reservation, ReservationResponse, ReservationState } from '../interfaces/reservationType';
+import { Reservation, ReservationResponse, ReservationState, ReservationUpdated } from '../interfaces/reservationType';
 
 const initialState: Reservation = {
   reservations: [],
   reservationExist: { status: false, message: '' },
   savedReservation: false,
-  selectedReservation: {},
-  showModifyReservationDialog: false,
+  selectedReservation: undefined,
+  showUpdateReservationDialog: false,
 };
 
 // Thunks
@@ -59,10 +59,10 @@ export const addReservation = createAsyncThunk(
 
 export const modifyReservation = createAsyncThunk(
   'reservations/modifyReservation',
-  async (data: { reservationUID: string; reservationData: ReservationState }, { rejectWithValue }) => {
+  async (data: { reservationUID: string; reservationData: ReservationUpdated }, { rejectWithValue }) => {
     try {
       const { reservationUID, reservationData } = data;
-      const response = updateReservation(reservationUID, reservationData);
+      const response = await updateReservation(reservationUID, reservationData);
       return response;
     } catch (error) {
       console.log('Error: ', error);
@@ -75,7 +75,7 @@ export const cancelReservation = createAsyncThunk(
   async (data: { reservationUID: string; reservationData: ReservationState }, { rejectWithValue }) => {
     try {
       const { reservationUID, reservationData } = data;
-      const response = deleteReservation(reservationUID, reservationData);
+      const response = await deleteReservation(reservationUID, reservationData);
       return response;
     } catch (error) {
       console.log('Error: ', error);
@@ -93,11 +93,11 @@ export const reservationsReducer = createSlice({
     },
     selectedReservation: (state, action) => {
       state.selectedReservation = action.payload;
-      state.showModifyReservationDialog = true;
+      state.showUpdateReservationDialog = true;
     },
     unselectedReservation: (state, action) => {
-      state.selectedReservation = {};
-      state.showModifyReservationDialog = false;
+      state.selectedReservation = undefined;
+      state.showUpdateReservationDialog = false;
     },
   },
   extraReducers: (builder) => {
@@ -123,8 +123,13 @@ export const reservationsReducer = createSlice({
         state.reservations = action.payload;
       })
       .addCase(modifyReservation.fulfilled, (state, action) => {
-        // console.log('ACTION : ',action)
-        //state.reservations.splice(action.payload, 1);
+        const reservations = state.reservations;
+        const reservationUpdated: ReservationState | undefined | null = action.payload;
+
+        if (reservationUpdated && reservationUpdated.id) {
+          const index = reservations.findIndex((rs) => rs.id === reservationUpdated.id);
+          reservations.splice(index, 1, reservationUpdated);
+        }
       })
       .addCase(cancelReservation.fulfilled, (state, action) => {
         state.reservations = state.reservations.filter((reservation) => reservation.id !== action?.payload?.id);

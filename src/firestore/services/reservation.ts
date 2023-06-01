@@ -1,11 +1,11 @@
 import { ref, get, push, update, remove } from 'firebase/database';
 
-import { ReservationState } from '../../interfaces/reservationType';
+import { ReservationState, ReservationUpdated } from '../../interfaces/reservationType';
 import { realtimeDB } from '../init';
 
 export const findReservation = async (date: Date, tableName: number, hour: number) => {
   const selectedDate = new Date(date);
-  console.log('>>> findReservation: ', selectedDate.getMonth());
+
   const reservationRef = ref(
     realtimeDB,
     `restaurant/reservations/${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`
@@ -33,7 +33,7 @@ export const getAllReservations = async () => {
 
     for (let key2 in keyData) {
       allReservations.push({
-        id: key,
+        id: key2,
         clientReservation: keyData[key2].clientReservation,
         reservationAmount: keyData[key2].reservationAmount,
         status: keyData[key2].status,
@@ -100,14 +100,14 @@ export const getDateReservationsByUser = async (date: Date, uid: string) => {
 };
 
 export const saveReservation = async (data: ReservationState) => {
-  const rDate =
+  const reservationDateString =
     `${data.reservationDate?.getFullYear()}-${data.reservationDate?.getMonth()}-${data.reservationDate?.getDate()}` ||
     `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
 
-  const refResponse = await push(ref(realtimeDB, `restaurant/reservations/${rDate}`), {
+  const refResponse = await push(ref(realtimeDB, `restaurant/reservations/${reservationDateString}`), {
     ...data,
     reserved: new Date().getTime(),
-    reservationDate: rDate,
+    reservationDate: reservationDateString,
   });
 
   if (refResponse != null) {
@@ -116,21 +116,35 @@ export const saveReservation = async (data: ReservationState) => {
   return refResponse;
 };
 
-export const updateReservation = async (reservationUID: string, data: ReservationState) => {
-  const rDate = `${data.reservationDate?.getFullYear()}-${data.reservationDate?.getMonth()}-${data.reservationDate?.getDate()}`;
+export const updateReservation = async (reservationUID: string, data: ReservationUpdated) => {
+  try {
+    const reservationDate = new Date(`${data.reservationDate}`);
 
-  const refResponse = await update(ref(realtimeDB, `restaurant/reservations/${rDate}/${reservationUID}`), data);
-  if (refResponse != null) {
+    if (!reservationDate) return;
+
+    const reservationDateString = `${reservationDate?.getFullYear()}-${
+      reservationDate.getMonth() + 1
+    }-${reservationDate?.getDate()}`;
+
+    await update(ref(realtimeDB, `restaurant/reservations/${reservationDateString}/${reservationUID}`), data);
+
     return data;
+  } catch (error) {
+    console.log('Error on update: ', error);
+    return null;
   }
-  return refResponse;
 };
 
 export const deleteReservation = async (reservationUID: string, data: ReservationState) => {
   const reservationDate = new Date(`${data.reservationDate}`);
-  const rDate = `${reservationDate.getFullYear()}-${reservationDate.getMonth() + 1}-${reservationDate.getDate()}`;
+  const reservationDateString = `${reservationDate.getFullYear()}-${
+    reservationDate.getMonth() + 1
+  }-${reservationDate.getDate()}`;
 
-  const refResponse = await remove(ref(realtimeDB, `restaurant/reservations/${rDate}/${reservationUID}`));
+  const refResponse = await remove(
+    ref(realtimeDB, `restaurant/reservations/${reservationDateString}/${reservationUID}`)
+  );
+  console.log('Delete refResponse: ', refResponse);
   return {
     id: reservationUID,
     ...data,

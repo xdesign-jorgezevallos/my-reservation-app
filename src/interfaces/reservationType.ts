@@ -12,10 +12,13 @@ export interface ReservationState {
 }
 
 export interface ReservationUpdated {
-  reservationAmount?: number;
-  reservationDate?: Date;
-  table?: number;
-  hour?: number;
+  id: string;
+  status: boolean;
+  clientReservation: string;
+  reservationAmount: number;
+  reservationDate: Date;
+  table: number;
+  hour: number;
 }
 
 export interface ReservationResponse {
@@ -27,6 +30,6 @@ export interface Reservation {
   reservations: ReservationState[];
   reservationExist: ReservationResponse;
   savedReservation: boolean;
-  selectedReservation: ReservationUpdated,
-  showModifyReservationDialog: boolean;
+  selectedReservation: ReservationUpdated | undefined;
+  showUpdateReservationDialog: boolean;
 }

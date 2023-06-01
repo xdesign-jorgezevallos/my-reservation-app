@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import { TextField, InputLabel, MenuItem, FormControl, Select, Button, Stack } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import Slide from "@mui/material/Slide";
-import { TransitionProps } from "@mui/material/transitions";
-import { ReservationState } from "../../interfaces/reservationType";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { TextField, InputLabel, MenuItem, FormControl, Select, Button, Stack } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
+import { ReservationState } from '../../interfaces/reservationType';
 
-import { addReservation } from "../../store/reservationSlice";
+import { addReservation } from '../../store/reservationSlice';
 
-import "./styles.scss";
-import { RootState } from "../../store";
+import './styles.scss';
+import { RootState } from '../../store';
 
 interface IReservationFormDialog {
   tableId: number;
@@ -23,8 +23,8 @@ interface IReservationFormDialog {
 }
 
 const initialDataForm = {
-  userUID: "",
-  clientReservation: "",
+  userUID: '',
+  clientReservation: '',
   reservationAmount: 0,
   status: false,
   reservationDate: new Date(),
@@ -51,7 +51,7 @@ export const ReservationFormDialog: React.FC<IReservationFormDialog> = (props: I
     ...initialDataForm,
     userUID: user.userUID,
     userEmail: user.email,
-    clientReservation: user.displayName || "",
+    clientReservation: user.displayName || '',
     table: tableId,
     hour,
     reservationDate: dateReservation,
@@ -66,8 +66,8 @@ export const ReservationFormDialog: React.FC<IReservationFormDialog> = (props: I
   };
 
   const handleReservation = async () => {
-    if (bookData.clientReservation.trim() === "" && !bookData.status) {
-      alert("Please insert Fullname name");
+    if (bookData.clientReservation.trim() === '' && !bookData.status) {
+      alert('Please insert Fullname name');
       return;
     }
     bookData.status = true;
@@ -92,14 +92,31 @@ export const ReservationFormDialog: React.FC<IReservationFormDialog> = (props: I
 
   return (
     <div>
-      <Button variant="outlined" centerRipple className="reservation-form-dialog__btn reservation-form-dialog__btn--book" onClick={handleClickOpen}>
+      <Button
+        variant="outlined"
+        centerRipple
+        className="reservation-form-dialog__btn reservation-form-dialog__btn--book"
+        onClick={handleClickOpen}
+      >
         book now!
       </Button>
-      <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={handleClose} aria-describedby="alert-dialog-slide-description">
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
         <DialogTitle>Reservation Table{tableId} </DialogTitle>
         <DialogContent>
-          <Stack spacing={2} style={{ paddingLeft: "10%", paddingRight: "10%" }}>
-            <TextField id="clientReservation" name="clientReservation" label="Name" variant="outlined" onChange={handleForm} />
+          <Stack spacing={2} style={{ paddingLeft: '10%', paddingRight: '10%' }}>
+            <TextField
+              id="clientReservation"
+              name="clientReservation"
+              label="Name"
+              variant="outlined"
+              onChange={handleForm}
+            />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Reservation Date"
@@ -114,7 +131,14 @@ export const ReservationFormDialog: React.FC<IReservationFormDialog> = (props: I
             <TextField label="Reseve table" variant="outlined" disabled defaultValue={`Table ${bookData.table}`} />
             <FormControl fullWidth>
               <InputLabel id="hour-select-label">Hour</InputLabel>
-              <Select labelId="hour-select-label" name="hour" label="Hour" value={bookData.hour} onChange={handleForm} disabled>
+              <Select
+                labelId="hour-select-label"
+                name="hour"
+                label="Hour"
+                value={bookData.hour}
+                onChange={handleForm}
+                disabled
+              >
                 <MenuItem value={-1}>Select time</MenuItem>
                 <MenuItem value={12}>12:00</MenuItem>
                 <MenuItem value={13}>13:00</MenuItem>

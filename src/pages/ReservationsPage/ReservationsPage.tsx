@@ -12,10 +12,11 @@ import { RootState } from '../../store';
 import {
   fetchReservations,
   fetchUserReservations,
-  selectedReservation,
   cancelReservation,
   fetchAllReservations,
+  selectedReservation,
 } from '../../store/reservationSlice';
+import UpdateReservationDialog from '../../components/UpdateReservationModel';
 
 export const ReservationsPagePage: React.FC = () => {
   const dispatch = useDispatch();
@@ -42,8 +43,8 @@ export const ReservationsPagePage: React.FC = () => {
     loadReservation();
   };
 
-  const selectReservation = (reservation: any) => {
-    dispatch(selectedReservation(reservation));
+  const handleSelectReservation = (reservation: any) => {
+    dispatch(selectedReservation(reservation) as any);
   };
 
   const handleCcanceReservation = (reservation: any) => {
@@ -122,7 +123,7 @@ export const ReservationsPagePage: React.FC = () => {
                   <Typography variant="body2"> {reservation.status ? 'Reserved' : 'Free'} </Typography>
                 </Stack>
                 <Stack direction="row" spacing={2}>
-                  <Button variant="contained" color="primary" onClick={() => selectReservation(reservation)}>
+                  <Button variant="contained" color="primary" onClick={() => handleSelectReservation(reservation)}>
                     Modify
                   </Button>
                   <Button variant="contained" color="error" onClick={() => handleCcanceReservation(reservation)}>
@@ -132,6 +133,8 @@ export const ReservationsPagePage: React.FC = () => {
               </Card>
             ))}
         </Box>
+
+        <UpdateReservationDialog />
       </div>
     </TemplateBase>
   );
