@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, Card, TextField, Button, CardContent, Typography, Stack } from "@mui/material";
 
 import { signup } from "../../store/authSlice";
-import { RootState } from "../../store";
+// import { RootState } from "../../store";
 import "./styles.scss";
 
 const initialNewUserData = {
@@ -16,10 +16,10 @@ const initialNewUserData = {
 export const Signup = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user } = useSelector(state   => state.auth);
     const [newUserData, setNewUserData] = useState(initialNewUserData);
 
-    const handleLoginForm = (event: any) => {
+    const handleLoginForm = event => {
         setNewUserData({
             ...newUserData,
             [event.target.name]: event.target.value,

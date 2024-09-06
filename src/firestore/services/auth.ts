@@ -59,6 +59,7 @@ export const signInEmailAndPassword = async (email: string, password: string) =>
     }
   } catch (error) {
     console.log('Error login: ', error);
+    return error
   }
 };
 
